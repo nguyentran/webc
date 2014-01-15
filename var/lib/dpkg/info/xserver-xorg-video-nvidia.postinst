@@ -13,12 +13,10 @@ then
 
 	if [ -x /usr/lib/nvidia/check-for-mismatching-nvidia-module ]
 	then
-		/usr/lib/nvidia/check-for-mismatching-nvidia-module 313.30
+		/usr/lib/nvidia/check-for-mismatching-nvidia-module 319.72
 	fi
 
 fi
 
 
 
-
-exit 0

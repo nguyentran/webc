@@ -2,7 +2,7 @@
 set -e
 
 
-TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
+TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/ /arm-linux-gnueabihf/"
 #DIVERT_QUIET="--quiet"
 
 
@@ -33,10 +33,10 @@ remove_multiarch_diversion()
 	done
 }
 
-case "$1" in
-    remove)
+if [ "$1" = "remove" ]; then
 
 	# restore libGL.so* from libgl1-mesa-{glx,dev}, diverted to /usr/lib/mesa-diverted
+	remove_multiarch_diversion libGL.so.1.2.0 /usr/lib /usr/lib/mesa-diverted
 	remove_multiarch_diversion libGL.so.1.2 /usr/lib /usr/lib/mesa-diverted
 	remove_multiarch_diversion libGL.so.1 /usr/lib /usr/lib/mesa-diverted
 	remove_multiarch_diversion libGL.so /usr/lib /usr/lib/mesa-diverted
@@ -46,10 +46,7 @@ case "$1" in
 	done
 	rmdir /usr/lib/mesa-diverted 2>/dev/null || true
 
-    ;;
-esac
+fi
 
 
 
-
-exit 0

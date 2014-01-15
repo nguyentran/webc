@@ -2,7 +2,7 @@
 set -e
 
 
-TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
+TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/ /arm-linux-gnueabihf/"
 
 add_slave()
 {
@@ -76,31 +76,7 @@ setup_alternatives()
 	fi
 }
 
-if [ "$1" = "triggered" ]; then
-
-	setup_alternatives
-
-fi
-
-
-# <target: wheezy>
-if [ "$1" = "configure" ]; then
-
-	# remove alternatives set up by libgl1-nvidia-alternatives, libgl1-nvidia-glx*-glx
-	if update-alternatives --list libGL.so.1 >/dev/null 2>&1 ; then
-		update-alternatives --remove-all libGL.so.1
-	fi
-
-	# remove alternatives set up by libglx-nvidia-alternatives, nvidia-glx*
-	if update-alternatives --list libglx.so >/dev/null 2>&1 ; then
-		update-alternatives --remove-all libglx.so
-	fi
-
-fi
-# </target: wheezy>
-
-
-if [ "$1" = "configure" ]; then
+if [ "$1" = "triggered" ] || [ "$1" = "configure" ]; then
 
 	setup_alternatives
 
@@ -108,5 +84,3 @@ fi
 
 
 
-
-exit 0

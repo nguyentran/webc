@@ -6,13 +6,16 @@ nvidia--libglx.so
 /usr/lib/nvidia/libglx.so
 nvidia--libnvidia-cfg.so.1-i386-linux-gnu
 /usr/lib/i386-linux-gnu/nvidia/libnvidia-cfg.so.1
+nvidia--nvidia-modprobe.conf
+/etc/modprobe.d/nvidia.conf
 nvidia--nvidia_drv.so
 /usr/lib/nvidia/nvidia_drv.so
 
 /usr/lib/nvidia/current
-313
+319
 /usr/lib/i386-linux-gnu/nvidia/current/libGL.so.1
 /usr/lib/nvidia/current/libglx.so
 /usr/lib/i386-linux-gnu/nvidia/current/libnvidia-cfg.so.1
+/etc/nvidia/nvidia-modprobe.conf
 /usr/lib/nvidia/current/nvidia_drv.so
 

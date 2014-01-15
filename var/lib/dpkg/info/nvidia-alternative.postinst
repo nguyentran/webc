@@ -2,7 +2,7 @@
 set -e
 
 
-TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/"
+TRIPLETS="/ /i386-linux-gnu/ /x86_64-linux-gnu/ /arm-linux-gnueabihf/"
 
 add_slave()
 {
@@ -43,21 +43,18 @@ if [ "$1" = "triggered" ]; then
 
 	slaves="
 		$(add_multiarch_slave /usr/lib nvidia/ libGL.so.1 /usr/lib nvidia/current/)
-		$(add_multiarch_slave /usr/lib nvidia/ libGLcore.so.1 /usr/lib nvidia/current/)
 		$(add_multiarch_slave /usr/lib nvidia/ libnvidia-cfg.so.1 /usr/lib nvidia/current/)
-		$(add_multiarch_slave /usr/lib nvidia/ libnvidia-tls.so.1 /usr/lib nvidia/current/)
-		$(add_multiarch_slave /usr/lib nvidia/tls/ libnvidia-tls.so.1 /usr/lib nvidia/current/tls/ tls-)
 		$(add_slave /usr/lib/nvidia/libglx.so libglx.so /usr/lib/nvidia/current/libglx.so)
 		$(add_slave /usr/lib/nvidia/nvidia_drv.so nvidia_drv.so /usr/lib/nvidia/current/nvidia_drv.so)
 		$(add_slave /usr/lib/nvidia/nvidia-bug-report.sh nvidia-bug-report.sh /usr/lib/nvidia/current/nvidia-bug-report.sh)
-		$(add_slave /usr/bin/nvidia-settings nvidia-settings /usr/bin/nvidia-settings-current)
-		$(add_slave /usr/bin/nv-control-dpy nv-control-dpy /usr/bin/nv-control-dpy-current)
-		$(add_slave /usr/share/applications/nvidia-settings.desktop nvidia-settings.desktop /usr/share/applications/nvidia-settings.desktop-current)
-		$(add_slave /usr/share/pixmaps/nvidia-settings.png nvidia-settings.png /usr/share/pixmaps/nvidia-settings.png-current)
-		$(add_slave /usr/share/man/man1/nvidia-settings.1.gz nvidia-settings.1.gz /usr/share/man/man1/nvidia-settings-current.1.gz)
+		$(add_slave /etc/modprobe.d/nvidia.conf nvidia-modprobe.conf /etc/nvidia/nvidia-modprobe.conf)
+		$(add_slave /usr/bin/nvidia-settings nvidia-settings /usr/lib/nvidia/current/nvidia-settings)
+		$(add_slave /usr/bin/nv-control-dpy nv-control-dpy /usr/lib/nvidia/current/nv-control-dpy)
+		$(add_slave /usr/share/applications/nvidia-settings.desktop nvidia-settings.desktop /usr/lib/nvidia/current/nvidia-settings.desktop)
+		$(add_slave /usr/share/man/man1/nvidia-settings.1.gz nvidia-settings.1.gz /usr/lib/nvidia/current/nvidia-settings.1.gz)
 "
 	if echo "$slaves" | grep -q "slave" ; then
-		update-alternatives --install /usr/lib/nvidia/nvidia nvidia /usr/lib/nvidia/current 313 $slaves
+		update-alternatives --install /usr/lib/nvidia/nvidia nvidia /usr/lib/nvidia/current 319 $slaves
 	else
 		update-alternatives --remove nvidia /usr/lib/nvidia/current
 	fi
@@ -76,7 +73,4 @@ if [ "$1" = "configure" ]; then
 fi
 
 
-
-
-exit 0
 

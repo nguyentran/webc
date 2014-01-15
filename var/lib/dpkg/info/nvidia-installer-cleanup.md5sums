@@ -1,5 +1,6 @@
-63fd20651c60f1bc21749eadfa47bdac  usr/lib/nvidia/check-for-conflicting-opengl-libraries
+1e5bb0884ee5b0c36073794b1868dde7  usr/lib/nvidia/alternate-install-present
+9edb441804c2b820719b8be090d9a927  usr/lib/nvidia/check-for-conflicting-opengl-libraries
 2686e30fe189b49e6bc0ace75c52a501  usr/lib/nvidia/pre-install
-4e7625f1643c963179ba7d363fa5744f  usr/share/doc/nvidia-installer-cleanup/changelog.Debian.gz
-59652accf27111bbbdd6650476965bba  usr/share/doc/nvidia-installer-cleanup/copyright
+68acf066606b498beb911a3602f39d24  usr/share/doc/nvidia-installer-cleanup/changelog.gz
+dd3b4a7c71c779ec999c102626d87e1b  usr/share/doc/nvidia-installer-cleanup/copyright
 ff9976eb2598cbfe5466cb606c58d070  usr/share/lintian/overrides/nvidia-installer-cleanup

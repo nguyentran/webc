@@ -5,6 +5,13 @@ set -e
 
 . /usr/share/debconf/confmodule
 
+package="nvidia-installer-cleanup"
+templates="$(dpkg-query --control-path "$package" templates)"
+if [ -n "$templates" ]; then
+	db_x_loadtemplatefile "$templates" "$package"
+fi
+
+
 # dpkg-reconfigure does not set DPKG_MAINTSCRIPT_PACKAGE (#560317)
 if [ -z "$DPKG_MAINTSCRIPT_PACKAGE" ]
 then
@@ -28,7 +35,7 @@ case "$DPKG_MAINTSCRIPT_PACKAGE" in
 esac
 
 CONFLICT_LIBS=""
-for f in "$libdir"/$pattern "$libdir"/{i386,x86_64}-linux-gnu/$pattern
+for f in "$libdir"/$pattern "$libdir"/{i386,x86_64}-linux-gnu/$pattern /usr/lib32/libGL.so*
 do
 	if [ -e "$f" ] || [ -L "$f" ]
 	then
