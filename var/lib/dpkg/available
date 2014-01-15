@@ -4976,6 +4976,30 @@ Description: Data files for Thai language support library
  This package contains data files needed by the LibThai library.
 Homepage: http://linux.thai.net/projects/libthai
 
+Package: nvidia-kernel-3.12-0.bpo.1-486
+Priority: optional
+Section: non-free/kernel
+Installed-Size: 9567
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: nvidia-kernel (319.72-1~bpo70+1)
+Version: 319.72-1~bpo70+1+3.12.6-2~bpo70+1
+Provides: nvidia-kernel-319.72
+Depends: nvidia-kernel-common (>= 20110213), nvidia-alternative--kmod-alias
+Recommends: linux-image-3.12-0.bpo.1-486
+Size: 3006320
+Description: NVIDIA binary kernel module for Linux 3.12-0.bpo.1-486
+ This package provides the non-free NVIDIA binary kernel module built for
+ the Debian Linux kernel package.  This kernel module is required by the
+ nvidia-glx X video driver, the non-free binary video driver for NVIDIA
+ graphics chipsets.  This is the main NVIDIA driver release, which
+ supports the latest chipsets; for older chipsets, see the NVIDIA legacy
+ packages.
+ .
+ This package is built for linux-image-3.12-0.bpo.1-486.
+Built-Using: linux (= 3.12.6-2~bpo70+1), nvidia-graphics-drivers (= 319.72-1~bpo70+1)
+Homepage: http://www.nvidia.com/
+
 Package: libxpm4
 Priority: optional
 Section: libs
@@ -9174,6 +9198,30 @@ Description: Not Erik's Windowing Toolkit - text mode windowing with slang
  to provide extra functionality. This package contains the shared library
  for programs that have been built with newt.
 Homepage: https://fedorahosted.org/newt/
+
+Package: nvidia-kernel-3.12-0.bpo.1-686-pae
+Priority: optional
+Section: non-free/kernel
+Installed-Size: 12074
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Architecture: i386
+Source: nvidia-kernel (319.72-1~bpo70+1)
+Version: 319.72-1~bpo70+1+3.12.6-2~bpo70+1
+Provides: nvidia-kernel-319.72
+Depends: nvidia-kernel-common (>= 20110213), nvidia-alternative--kmod-alias
+Recommends: linux-image-3.12-0.bpo.1-686-pae
+Size: 3589594
+Description: NVIDIA binary kernel module for Linux 3.12-0.bpo.1-686-pae
+ This package provides the non-free NVIDIA binary kernel module built for
+ the Debian Linux kernel package.  This kernel module is required by the
+ nvidia-glx X video driver, the non-free binary video driver for NVIDIA
+ graphics chipsets.  This is the main NVIDIA driver release, which
+ supports the latest chipsets; for older chipsets, see the NVIDIA legacy
+ packages.
+ .
+ This package is built for linux-image-3.12-0.bpo.1-686-pae.
+Built-Using: linux (= 3.12.6-2~bpo70+1), nvidia-graphics-drivers (= 319.72-1~bpo70+1)
+Homepage: http://www.nvidia.com/
 
 Package: libdb4.7
 Priority: standard

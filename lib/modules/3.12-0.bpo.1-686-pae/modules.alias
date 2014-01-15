@@ -16279,3 +16279,8 @@ alias net-pf-16-proto-16-family-nfc nfc
 alias net-pf-39 nfc
 alias net-pf-40 vmw_vsock_vmci_transport
 alias vmware_vsock vmw_vsock_vmci_transport
+alias char-major-195-* nvidia_current
+alias pci:v000010DEd00000E00sv*sd*bc04sc80i00* nvidia_current
+alias pci:v000010DEd00000AA3sv*sd*bc0Bsc40i00* nvidia_current
+alias pci:v000010DEd*sv*sd*bc03sc02i00* nvidia_current
+alias pci:v000010DEd*sv*sd*bc03sc00i00* nvidia_current

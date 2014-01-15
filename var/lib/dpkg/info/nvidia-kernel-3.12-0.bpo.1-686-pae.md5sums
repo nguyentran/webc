@@ -1,0 +1,8 @@
+024638fb65ef61993db375b46874592c  lib/modules/3.12-0.bpo.1-686-pae/nvidia/nvidia-current.ko
+46162cb76fd8912884e3567a17a7ced9  usr/share/bug/nvidia-kernel-3.12-0.bpo.1-686-pae/control
+48ef903787afeeeaad9988279dc26c26  usr/share/bug/nvidia-kernel-3.12-0.bpo.1-686-pae/script
+efb8c29b1cbf9207b55c78faf74b436b  usr/share/doc/nvidia-kernel-3.12-0.bpo.1-686-pae/README.Debian
+ad28ae3a5946b93c8c6bb6129bc44772  usr/share/doc/nvidia-kernel-3.12-0.bpo.1-686-pae/changelog.Debian.gz
+dacf34b5cd316da2cfdb918d0992a24a  usr/share/doc/nvidia-kernel-3.12-0.bpo.1-686-pae/changelog.gz
+e6160f49a2775ed2b6ee9e50d0a2237f  usr/share/doc/nvidia-kernel-3.12-0.bpo.1-686-pae/copyright
+39953c94ed5fbc628e0d93d6e61d7db7  usr/share/lintian/overrides/nvidia-kernel-3.12-0.bpo.1-686-pae
