@@ -173,7 +173,7 @@ do
 	mac=$( mac_address )
 	usbid=$( usb_serials | head -n1 )
 
-	if test -x /opt/firefox/firefox
+	if test -x /opt/SBACSecureBrowser6.3/SBACSecureBrowser6.3
 	then
 
 		xsetroot -name "$webc_version $webc_id"
@@ -189,7 +189,7 @@ do
 		if cmdline_has noptirun || ! pidof bumblebeed
 		then
 			logs "FF (re)start"
-			/opt/firefox/firefox $(echo $homepage | 
+			/opt/SBACSecureBrowser6.3/SBACSecureBrowser6.3 $(echo $homepage | 
 			sed "s,MACID,$mac,g" | 
 			sed "s,WEBCID,$webc_id,g" | 
 			sed "s,WEBCVERSION,$webc_version,g" | 

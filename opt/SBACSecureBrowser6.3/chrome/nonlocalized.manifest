@@ -1,0 +1,41 @@
+# pippki.manifest
+content pippki jar:pippki.jar!/content/pippki/
+
+# kiosk.manifest
+locale  bmakiosk en-US jar:kiosk.jar!/locale/en-US/
+skin    bmakiosk classic/1.0 jar:kiosk.jar!/skin/ 
+content bmakiosk jar:kiosk.jar!/content/ contentaccessible=yes
+
+# toolkit.manifest
+content xbl-marquee jar:toolkit.jar!/content/xbl-marquee/
+skin global classic/1.0 jar:toolkit.jar!/skin/classic/global/ os!=WINNT
+content global jar:toolkit.jar!/content/global/ contentaccessible=yes
+content mozapps jar:toolkit.jar!/content/mozapps/
+skin mozapps classic/1.0 jar:toolkit.jar!/skin/classic/mozapps/ os!=WINNT
+content global-region jar:toolkit.jar!/content/global-region/
+content cookie jar:toolkit.jar!/content/cookie/
+content passwordmgr jar:toolkit.jar!/content/passwordmgr/
+override chrome://global/content/nsTransferable.js chrome://global/content/nsDragAndDrop.js
+content global-platform jar:toolkit.jar!/content/global-platform/ platform
+skin mozapps classic/1.0 jar:toolkit.jar!/skin/classic/mozapps/ os=WINNT osversion<6
+resource gre-resources jar:toolkit.jar!/res/
+content satchel jar:toolkit.jar!/content/satchel/
+skin global classic/1.0 jar:toolkit.jar!/skin/classic/global/ os=WINNT osversion<6
+
+# jslib.manifest
+locale  jslib en-US jar:jslib.jar!/locale/en-US/
+skin    jslib classic/1.0 jar:jslib.jar!/skin/ 
+content jslib jar:jslib.jar!/ contentaccessible=yes
+
+# browser.manifest
+content browser jar:browser.jar!/content/browser/ contentaccessible=yes
+overlay chrome://global/content/viewPartialSource.xul chrome://browser/content/viewSourceOverlay.xul
+override chrome://global/content/license.html chrome://browser/content/license.html
+override chrome://global/skin/icons/warning-16.png moz-icon://stock/gtk-dialog-warning?size=menu
+overlay chrome://global/content/viewSource.xul chrome://browser/content/viewSourceOverlay.xul
+style chrome://global/content/customizeToolbar.xul chrome://browser/content/browser.css
+skin communicator classic/1.0 jar:browser.jar!/skin/classic/communicator/
+overlay chrome://browser/content/browser.xul         chrome://browser/content/safebrowsing/report-phishing-overlay.xul
+skin browser classic/1.0 jar:browser.jar!/skin/classic/browser/
+style chrome://global/content/customizeToolbar.xul chrome://browser/skin/
+
