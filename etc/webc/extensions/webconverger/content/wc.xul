@@ -6,7 +6,7 @@
 
 <script src="wc.js" />
 
-<menubar id="main-menubar" hidden="true"  fullscreentoolbar="false" disabled="true">
+<menubar id="main-menubar" hidden="true" fullscreentoolbar="false" disabled="true">
 <menuitem id="menu_preferences" disabled="true"/>
 </menubar>
 
@@ -129,6 +129,7 @@
 <key id="manBookmarkKb" disabled="true"/>
 <key id="openFileKb" disabled="true"/>
 <key id="restart" keycode="VK_F10" oncommand="goQuitApplication();"/>
+<key id="fullscreen" keycode="VK_F11" oncommand="goFullscreen();"/>
 <key id="showAllHistoryKb" disabled="true"/>
 <key id="viewBookmarksSidebarKb" command="doNothing();"/>
 <key id="viewBookmarksSidebarWinKb" command="doNothing();"/>

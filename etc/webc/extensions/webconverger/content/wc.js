@@ -71,4 +71,3 @@ function BrowserLoadURL(aTriggeringEvent, aPostData) { // override browser.js
 
 	focusElement(content);
 }
-
