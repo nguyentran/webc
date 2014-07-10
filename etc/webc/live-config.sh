@@ -22,7 +22,6 @@ mount_git () {
 
 	# Sanity checks
 	[ -d "$git_repo" ] || return
-	[ -d /live/overlay ] || return
 	[ -n "$current_git_revision" ] || return
 
 
