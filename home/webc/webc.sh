@@ -10,6 +10,28 @@ else
 	logs x11 config not found
 fi
 
+# remove ctrl
+xmodmap -e "remove Control = Control_L"
+xmodmap -e "remove Control = Control_R"
+
+# remove shift
+xmodmap -e "remove shift = Shift_L"
+xmodmap -e "remove shift = Shift_R"
+
+# remove atl
+xmodmap -e "remove mod1 = Alt_L"
+xmodmap -e "remove mod1 = Alt_R"
+xmodmap -e "remove mod1 = Meta_L"
+
+# remove super
+xmodmap -e "remove mod4 = Super_L"
+xmodmap -e "remove mod4 = Super_R"
+xmodmap -e "remove mod4 = Hyper_R"
+
+# remove mode switch
+xmodmap -e "remove mod5 = ISO_Level3_Shift"
+xmodmap -e "remove mod5 = Mode_Switch"
+
 wm="/usr/bin/dwm.web" # default
 
 if test "$(cmdline_get chrome)" = neon
