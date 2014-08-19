@@ -110,7 +110,7 @@ if cmdline_has noupgrade
 then
 	logs "Upgrade disabled."
 else
-	upgrade
+	logs "upgrade is called."
 fi
 
 echo ACK > $upgrade_pipe

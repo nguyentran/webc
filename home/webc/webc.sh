@@ -79,6 +79,8 @@ xset s blank
 xset s 600
 xset +dpms
 
+exec /usr/bin/kioskresetstation 10
+
 for x in $(cmdline)
 do
 	case $x in
