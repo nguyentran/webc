@@ -132,8 +132,8 @@ install_root() {
 	cp -r /live/image/live/filesystem.git ${dir}/live/
 	
 	# config homepage
-	homepage=`cat /live/image/boot/homepage.cfg`
-	sed -i 's,homepage=\"\$install_qa_url\",homepage="'"$homepage"'",' ${dir}/etc/webc/webc.sh
+	#homepage=`cat /live/image/boot/homepage.cfg`
+	#sed -i 's,homepage=\"\$install_qa_url\",homepage="'"$homepage"'",' ${dir}/etc/webc/webc.sh
 }
 
 # Trap any shell exits with the failed handler
