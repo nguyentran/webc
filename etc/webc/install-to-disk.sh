@@ -133,7 +133,7 @@ install_root() {
 	
 	# config homepage
 	homepage=`cat /live/image/boot/homepage.cfg`
-	sed -i 's,homepage=\"\$install_qa_url\",homepage="'"$homepage"'",' ${dir}/home/webc/webc.sh
+	sed -i 's,homepage=\"\$install_qa_url\",homepage="'"$homepage"'",' ${dir}/etc/webc/webc.sh
 }
 
 # Trap any shell exits with the failed handler

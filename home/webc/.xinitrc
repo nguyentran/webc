@@ -3,7 +3,7 @@
 
 if cmdline_has debug
 then
-	/etc/webc/logbot.sh bash -x /home/webc/webc.sh
+	/etc/webc/logbot.sh bash -x /etc/webc/webc.sh
 else
-	bash /home/webc/webc.sh
+	bash /etc/webc/webc.sh
 fi
