@@ -65,10 +65,10 @@ done
 
 # get the $webc_id
 . "/etc/webc/webc.conf"
-wget http://54.251.150.148/core/homepage.txt
-hompage=`cat homepage.txt`
-rm -rf homepage.txt
-#homepage="$install_qa_url" # default homepage
+#wget http://54.251.150.148/core/homepage.txt
+#hompage=`cat homepage.txt`
+#rm -rf homepage.txt
+homepage="$install_qa_url" # default homepage
 
 mkfifo "$live_config_pipe"
 read answer < "$live_config_pipe" # blocking till live-config is finished
