@@ -99,8 +99,8 @@ then
 	echo 'pref("extensions.webconverger.showprintbutton", true);' >> "$prefs"
 fi
 
-fullscreen="/etc/webc/extensions/webcfullscreen"
-test -e "$link" && rm -f "$link"
+#fullscreen="/etc/webc/extensions/webcfullscreen"
+#test -e "$link" && rm -f "$link"
 ln -s "$fullscreen" "$link"
 #noaddress="/etc/webc/extensions/webcnoaddressbar"
 #ln -s "$noaddress" "$link"
