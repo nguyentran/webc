@@ -67,6 +67,13 @@ done
 . "/etc/webc/webc.conf"
 homepage="$install_qa_url" # default homepage
 
+if test -x /config/homepage.cfg
+then
+	homepage=`cat /config/homepage.cfg`
+else
+	homepage="$install_qa_url" # default homepage
+fi
+
 mkfifo "$live_config_pipe"
 read answer < "$live_config_pipe" # blocking till live-config is finished
 rm -f "$live_config_pipe"

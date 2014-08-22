@@ -132,6 +132,8 @@ install_root() {
 	cp -r /live/image/live/filesystem.git ${dir}/live/
 	
 	# config homepage
+	mkdir -p "${dir}/config"
+	cp -rf /live/image/boot/homepage.cfg ${dir}/config/
 	#homepage=`cat /live/image/boot/homepage.cfg`
 	#sed -i 's,homepage=\"\$install_qa_url\",homepage="'"$homepage"'",' ${dir}/etc/webc/webc.sh
 }
