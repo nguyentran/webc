@@ -70,9 +70,9 @@ done
 #rm -rf homepage.txt
 
 config_url="http://10.0.100.110/WebConvergerConfig/Default.aspx"
-mac=$( mac_address )
+#mac=$( mac_address )
 
-if curl -f -o /home/webc/homepage.tmp --retry 3 "$config_url?V=$webc_version&D=$device&K=$kernel&M=$mac"
+if curl -f -o /home/webc/homepage.tmp --retry 3 "$config_url?V=$webc_version&D=$device&K=$kernel&M=`mac_address`"
 then
         touch /home/webc/homepage.tmp
 else
