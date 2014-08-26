@@ -68,7 +68,21 @@ done
 #wget http://54.251.150.148/core/homepage.txt
 #hompage=`cat homepage.txt`
 #rm -rf homepage.txt
-homepage="$install_qa_url" # default homepage
+
+config_url="http://10.0.100.110/WebConvergerConfig/Default.aspx"
+mac=$( mac_address )
+
+if curl -f -o /home/webc/homepage.tmp --retry 3 "$config_url?V=$webc_version&D=$device&K=$kernel&M=$mac"
+then
+        touch /home/webc/homepage.tmp
+else
+        echo "CONFIG: Failed to download from $config_url"
+	homepage="$install_qa_url" # default homepage
+fi
+
+#homepage="$install_qa_url" # default homepage
+homepage=`cat /home/webc/homepage.tmp`
+rm -rf /home/webc/homepage.tmp
 
 mkfifo "$live_config_pipe"
 read answer < "$live_config_pipe" # blocking till live-config is finished
