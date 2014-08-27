@@ -77,7 +77,7 @@ then
         touch /home/webc/homepage.tmp
 else
         echo "CONFIG: Failed to download from $config_url"
-	homepage="$install_qa_url" # default homepage
+	homepage="file:///etc/webc/homagepage_error.html" # default homepage
 fi
 
 #homepage="$install_qa_url" # default homepage
