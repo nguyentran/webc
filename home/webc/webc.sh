@@ -69,9 +69,9 @@ done
 #hompage=`cat homepage.txt`
 #rm -rf homepage.txt
 
-if test -f /boot/homepage.cfg
+if test -f /config/homepage.cfg
 then
-	homepage=`cat /boot/homepage.cfg`
+	homepage=`cat /config/homepage.cfg`
 else
 	homepage="$install_qa_url"
 fi
