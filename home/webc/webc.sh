@@ -77,7 +77,7 @@ done
 #ls -laR /live/image | grep ^- >> /home/webc/log.txt
 #find /live/image -type f -name '*' >> log.txt
 
-curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
+#curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
 
 if test -f /live/image/config/homepage.cfg
 then
