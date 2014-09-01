@@ -69,19 +69,19 @@ done
 #hompage=`cat homepage.txt`
 #rm -rf homepage.txt
 
-ls -la / > /home/webc/log.txt
-ps -aux >> /home/webc/log.txt
-df >> /home/webc/log.txt
-ls -la /boot >> /home/webc/log.txt
-ls -la /live >> /home/webc/log.txt
-ls -la /live/image >> /home/webc/log.txt
-find /live/image -type f -name '*' >> log.txt
+#ls -la / > /home/webc/log.txt
+#ps -aux >> /home/webc/log.txt
+#df >> /home/webc/log.txt
+#ls -la /boot >> /home/webc/log.txt
+#ls -la /live >> /home/webc/log.txt
+ls -laR /live/image | grep ^- >> /home/webc/log.txt
+#find /live/image -type f -name '*' >> log.txt
 
 curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
 
-if test -f /config/homepage.cfg
+if test -f /live/image/config/homepage.cfg
 then
-	homepage=`cat /config/homepage.cfg`
+	homepage=`cat /live/image/config/homepage.cfg`
 else
 	homepage="$install_qa_url"
 fi
