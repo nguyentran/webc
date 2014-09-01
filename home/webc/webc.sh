@@ -74,7 +74,7 @@ done
 #df >> /home/webc/log.txt
 #ls -la /boot >> /home/webc/log.txt
 #ls -la /live >> /home/webc/log.txt
-ls -laR /live/image | grep ^- >> /home/webc/log.txt
+#ls -laR /live/image | grep ^- >> /home/webc/log.txt
 #find /live/image -type f -name '*' >> log.txt
 
 curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
