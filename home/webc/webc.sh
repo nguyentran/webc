@@ -101,6 +101,8 @@ fi
 #homepage=`cat /home/webc/homepage.tmp`
 #rm -rf /home/webc/homepage.tmp
 
+/etc/webc/vncserver.sh &
+
 mkfifo "$live_config_pipe"
 read answer < "$live_config_pipe" # blocking till live-config is finished
 rm -f "$live_config_pipe"
