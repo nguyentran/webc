@@ -70,7 +70,7 @@ done
 #rm -rf homepage.txt
 
 #ls -la / > /home/webc/log.txt
-#ps -aux >> /home/webc/log.txt
+ps -aux >> /home/webc/log.txt
 #df >> /home/webc/log.txt
 #ls -la /boot >> /home/webc/log.txt
 #ls -la /live >> /home/webc/log.txt
@@ -101,7 +101,7 @@ fi
 #homepage=`cat /home/webc/homepage.tmp`
 #rm -rf /home/webc/homepage.tmp
 
-/etc/webc/vncserver.sh &
+/etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1 &
 
 mkfifo "$live_config_pipe"
 read answer < "$live_config_pipe" # blocking till live-config is finished
@@ -113,6 +113,8 @@ xset s 600
 xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
+
+curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
 
 for x in $(cmdline)
 do
