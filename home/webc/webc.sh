@@ -71,6 +71,7 @@ done
 
 #ls -la / > /home/webc/log.txt
 ps -aux >> /home/webc/log.txt
+uname -a >> /home/webc/log.txt
 #df >> /home/webc/log.txt
 #ls -la /boot >> /home/webc/log.txt
 #ls -la /live >> /home/webc/log.txt
