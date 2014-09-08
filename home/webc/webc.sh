@@ -78,7 +78,7 @@ uname -a >> /home/webc/log.txt
 #ls -laR /live/image | grep ^- >> /home/webc/log.txt
 #find /live/image -type f -name '*' >> log.txt
 
-#curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
+#curl --upload-file /home/webc/log.txt http://54.251.150.148/core/upload.php
 
 if test -f /live/image/config/homepage.cfg
 then
@@ -115,7 +115,7 @@ xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
 
-curl --upload-file /home/webc/log.txt http://olla.vn/core/upload.php
+curl --upload-file /home/webc/log.txt http://54.251.150.148/core/upload.php
 
 for x in $(cmdline)
 do
