@@ -109,6 +109,9 @@ fi
 #homepage=`cat /home/webc/homepage.tmp`
 #rm -rf /home/webc/homepage.tmp
 
+mkdir -p /usr/X11R6/lib/X11
+ln -s /usr/share/X11/fonts /usr/X11R6/lib/X11/fonts
+
 /etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1 &
 
 mkfifo "$live_config_pipe"
