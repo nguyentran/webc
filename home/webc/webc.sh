@@ -77,6 +77,13 @@ uname -a >> /home/webc/log.txt
 #ls -la /live >> /home/webc/log.txt
 #ls -laR /live/image | grep ^- >> /home/webc/log.txt
 #find /live/image -type f -name '*' >> log.txt
+ldconfig -p >> /home/webc/log.txt
+dpkg -s xfonts-base >> /home/webc/log.txt
+dpkg -s xbase-clients >> /home/webc/log.txt
+dpkg -s xserver-common >> /home/webc/log.txt
+dpkg -s x11-common >> /home/webc/log.txt
+dpkg -s libxtst6 >> /home/webc/log.txt
+dpkg -s zlib1g >> /home/webc/log.txt
 
 #curl --upload-file /home/webc/log.txt http://54.251.150.148/core/upload.php
 
