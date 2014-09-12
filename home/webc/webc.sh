@@ -111,8 +111,10 @@ fi
 
 mkdir -p /usr/X11R6/lib/X11
 ln -s /usr/share/X11/fonts /usr/X11R6/lib/X11/fonts
-
+chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt
 /etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1 &
+
+cat /home/webc/.vnc/debian\:1.log >> /home/webc/log.txt
 
 mkfifo "$live_config_pipe"
 read answer < "$live_config_pipe" # blocking till live-config is finished
