@@ -1,6 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
-#  Copyright (C) 2002-2009 Constantin Kaplinsky.  All Rights Reserved.
+#  Copyright (C) 2004-2006 Ola Lundqvist <opal@debian.org>
+#  Copyright (C) 2002-2005 RealVNC Ltd.
 #  Copyright (C) 1999 AT&T Laboratories Cambridge.  All Rights Reserved.
 #
 #  This is free software; you can redistribute it and/or modify
@@ -23,41 +24,87 @@
 # vncserver - wrapper script to start an X VNC server.
 #
 
+# This file was heavily edited by Ola Lundqvist <opal@debian.org> using
+# options from vnc package.
+# Most modifications are written by Marcus.Brinkmann@ruhr-uni-bochum.de and
+# now incorporated by Ola.
+
+# Please report all errors to Debian and not to ORL.
+
+#
 # First make sure we're operating in a sane environment.
+#
 
 &SanityCheck();
 
-# Default configuration of the TightVNC Server:
+#
+# Global variables.  You may want to configure some of these for your site.
+#
 
 $geometry = "1024x768";
-$depth = 24;
-$desktopName = "X";
-$vncClasses = "/usr/local/vnc/classes";
+$depth = 16;
+$vncJavaFiles = (((-d "/usr/share/vnc-java") && "/usr/share/vnc-java") ||
+		 ((-d "/usr/share/vnc/classes") && "/usr/share/vnc/classes") ||
+                 ((-d "/usr/local/vnc/classes") && "/usr/local/vnc/classes"));
+
 $vncUserDir = "$ENV{HOME}/.vnc";
-$fontPath = "unix/:7100";
-$authType = "-rfbauth $vncUserDir/passwd";
-
-# Read configuration from the system-wide and user files if present.
-
-$configFile = "/etc/tightvncserver.conf";
-ReadConfiguration();
-$configFile = "$ENV{HOME}/.vnc/tightvncserver.conf";
-ReadConfiguration();
-
-# Done reading configuration.
+$xauthorityFile = "$ENV{XAUTHORITY}" || "$ENV{HOME}/.Xauthority";
 
 $defaultXStartup
     = ("#!/bin/sh\n\n".
-       "xrdb \$HOME/.Xresources\n".
+       "# Uncomment the following two lines for normal desktop:\n".
+       "# unset SESSION_MANAGER\n".
+       "# exec /etc/X11/xinit/xinitrc\n\n".
+       "[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup\n".
+       "[ -r \$HOME/.Xresources ] && xrdb \$HOME/.Xresources\n".
        "xsetroot -solid grey\n".
-       "xterm -geometry 80x24+10+10 -ls -title \"\$VNCDESKTOP Desktop\" &\n".
-       "twm &\n");
+       "vncconfig -iconic &\n".
+       "x-terminal-emulator -geometry 80x24+10+10 -ls -title \"\$VNCDESKTOP Desktop\" &\n".
+       "x-window-manager &\n");
 
-$xauthorityFile = "$ENV{XAUTHORITY}";
+######## Adding configuration possibility ################
+$Config_file = "/etc/vnc.conf";
+&ReadConfigFile();
+$Config_file = "$ENV{HOME}/.vncrc";
+&ReadConfigFile();
+
+if (!$XFConfigPath) {
+  foreach ("/etc/X11/xorg.conf", "/etc/X11/XF86Config-4", "/etc/X11/XF86Config" ){
+    $XFConfigPath = $_;
+    last if ( -e $XFConfigPath );
+  }
+}
+if (!$fontPath) {
+  &ReadXFConfigFont;
+}
+if (!$fontPath) {
+  $fontPath = "/usr/X11R6/lib/X11/fonts/Type1/,".
+              "/usr/X11R6/lib/X11/fonts/Speedo/,".
+              "/usr/X11R6/lib/X11/fonts/misc/,".
+              "/usr/X11R6/lib/X11/fonts/75dpi/,".
+              "/usr/X11R6/lib/X11/fonts/100dpi/,".
+              "/usr/share/fonts/X11/misc/,".
+      	      "/usr/share/fonts/X11/Type1/,".
+              "/usr/share/fonts/X11/75dpi/,".
+              "/usr/share/fonts/X11/100dpi/"
+}
+if (!$colorPath) {
+  &ReadXFConfigColor;
+}
+if (!$colorPath) {
+  foreach ("/etc/X11/rgb", "/usr/share/X11/rgb", "/usr/X11R6/lib/X11/rgb"){
+      $colorPath = $_;
+      last if ( -e "${colorPath}.txt" );
+  }
+}
+
+##########################################################
 
 $vncUserDirUnderTmp = ($vncUserDir =~ m|^/tmp/.+|) ? 1 : 0;
 $xstartup = ($vncUserDirUnderTmp) ?
   "$ENV{HOME}/.vncstartup" : "$vncUserDir/xstartup";
+$xstartup = $vncStartup if ($vncStartup);
+
 unless ($xauthorityFile) {
     if ($vncUserDirUnderTmp) {
         $xauthorityFile = "$vncUserDir/.Xauthority";
@@ -72,11 +119,21 @@ chop($host = `uname -n`);
 # Check command line options
 
 &ParseOptions("-geometry",1,"-depth",1,"-pixelformat",1,"-name",1,"-kill",1,
-	      "-help",0,"-h",0,"--help",0);
+	      "-help",0,"-h",0,"--help",0,
+	      "-clean",0, "-fp",1,
+	      "-alwaysshared",0, "-nevershared",0,
+	      "-httpport",1,"-basehttpport",1);
 
 &Usage() if ($opt{'-help'} || $opt{'-h'} || $opt{'--help'});
 
 &Kill() if ($opt{'-kill'});
+
+$useClasses = 0;
+if (defined $vncJavaFiles) {
+  if(-d $vncJavaFiles) {
+      $useClasses = 1;
+  }
+}
 
 # Uncomment this line if you want default geometry, depth and pixelformat
 # to match the current X display:
@@ -93,35 +150,48 @@ if ($opt{'-pixelformat'}) {
     $pixelformat = $opt{'-pixelformat'};
 }
 
-&CheckGeometryAndDepth();
+if ($opt{'-fp'}) {
+    @fontPathElements = split(/\s*,\s*/, "$opt{'-fp'}");
 
-if ($opt{'-name'}) {
-    $desktopName = $opt{'-name'};
+    $fontPath = '';
+
+    foreach $i (0.."$#fontPathElements") {
+       $tempFontPath = $fontPathElements[$i];
+       if ($tempFontPath !~ m!^[^/]*/[^/]*:\d+$!) {
+           $tempFontPath =~ s/:unscaled$//;
+           if (-r "$tempFontPath/fonts.dir") {
+               $fontPath .= "$fontPathElements[$i],";
+           }
+       } else {
+           $fontPath .= "$fontPathElements[$i],";
+       }
+    }
+    chop $fontPath;
 }
+
+&CheckGeometryAndDepth();
 
 # Create the user's vnc directory if necessary.
 
-unless (-e $vncUserDir) {
-    unless (mkdir($vncUserDir, 0700)) {
-        die "$prog: Could not create $vncUserDir.\n";
+if (!(-e $vncUserDir)) {
+    if (!mkdir($vncUserDir,0755)) {
+	die "$prog: Could not create $vncUserDir.\n";
     }
 }
-($z,$z,$mode) = lstat("$vncUserDir");
+
+($z,$z,$mode) = stat("$vncUserDir");
 if (!-d _ || !-o _ || ($vncUserDirUnderTmp && ($mode & 0777) != 0700)) {
     die "$prog: Wrong type or access mode of $vncUserDir.\n";
 }
 
 # Make sure the user has a password.
 
-($z,$z,$mode) = lstat("$vncUserDir/passwd");
-if (-e _ && (!-f _ || !-o _)) {
-    die "$prog: Wrong type or ownership on $vncUserDir/passwd.\n";
-}
-if (!-e _ || ($mode & 077) != 0) {
+($z,$z,$mode) = stat("$vncUserDir/passwd");
+if (!(-e "$vncUserDir/passwd") || ($mode & 077)) {
     warn "\nYou will require a password to access your desktops.\n\n";
-    system("vncpasswd $vncUserDir/passwd");
-    if (($? & 0xFF00) != 0) {
-        exit 1;
+    system("vncpasswd $vncUserDir/passwd"); 
+    if (($? >> 8) != 0) {
+	exit 1;
     }
 }
 
@@ -130,7 +200,7 @@ if (!-e _ || ($mode & 077) != 0) {
 if ((@ARGV > 0) && ($ARGV[0] =~ /^:(\d+)$/)) {
     $displayNumber = $1;
     shift(@ARGV);
-    unless (&CheckDisplayNumber($displayNumber)) {
+    if (!&CheckDisplayNumber($displayNumber)) {
 	die "A VNC server is already running as :$displayNumber\n";
     }
 } elsif ((@ARGV > 0) && ($ARGV[0] !~ /^-/)) {
@@ -144,33 +214,62 @@ $vncPort = 5900 + $displayNumber;
 $desktopLog = "$vncUserDir/$host:$displayNumber.log";
 unlink($desktopLog);
 
-# Make an X server cookie - use as the seed the sum of the current time, our
-# PID and part of the encrypted form of the password.  Ideally we'd use
-# /dev/urandom, but that's only available on Linux.
+# Make an X server cookie - use mcookie
+$cookie = `/usr/bin/mcookie`;
+open (XAUTH, "|xauth -f $xauthorityFile source -");
+print XAUTH "add $host:$displayNumber . $cookie\n";
+print XAUTH "add $host/unix:$displayNumber . $cookie\n";
+close XAUTH;
 
-srand(time+$$+unpack("L",`cat $vncUserDir/passwd`));
-$cookie = "";
-for (1..16) {
-    $cookie .= sprintf("%02x", int(rand(256)));
+if ($opt{'-name'}) {
+    $desktopName = $opt{'-name'};
+} else {
+    $desktopName = "$host:$displayNumber ($ENV{USER})";
 }
-
-system("xauth -f $xauthorityFile add $host:$displayNumber . $cookie");
-system("xauth -f $xauthorityFile add $host/unix:$displayNumber . $cookie"); 
 
 # Now start the X VNC Server
 
-$cmd = "Xvnc :$displayNumber";
+$cmd = "Xvnc4 :$displayNumber";
 $cmd .= " -desktop " . &quotedString($desktopName);
-$cmd .= " -httpd $vncClasses";
+if ($useClasses) {
+  $cmd .= " -httpd $vncJavaFiles";
+  print ("Found $vncJavaFiles for http connections.\n");
+  if ($opt{'-httpport'}) {
+    $cmd .= " -httpport $opt{'-httpport'}";
+    print ("Listening to $opt{'-httpport'} for http connections.\n");
+  }
+  elsif ($opt{'-basehttpport'}) {
+    my $v = $opt{'-basehttpport'} + $displayNumber;
+    print ("Listening to $v for http connections.\n");
+    $cmd .= " -httpport $v";
+  }
+}
 $cmd .= " -auth $xauthorityFile";
-$cmd .= " -geometry $geometry" if ($geometry);
+if ($geometry) {
+  if ($#$geometry==-1) {
+    $cmd .= " -geometry $geometry";
+  } else {
+    foreach $i (0..$#$geometry) {
+      $cmd .= " -geometry $geometry->[$i]";
+    }
+  }
+}
 $cmd .= " -depth $depth" if ($depth);
 $cmd .= " -pixelformat $pixelformat" if ($pixelformat);
-$cmd .= " -rfbwait 120000";
-$cmd .= " $authType";
+$cmd .= " -rfbwait 30000";
+$cmd .= " -rfbauth $vncUserDir/passwd";
 $cmd .= " -rfbport $vncPort";
+$cmd .= " -pn";
+
+# Add font path and color database stuff here, e.g.:
+#
+# $cmd .= " -fp /usr/lib/X11/fonts/misc/,/usr/lib/X11/fonts/75dpi/";
+# $cmd .= " -co /usr/lib/X11/rgb";
+#
 $cmd .= " -fp $fontPath" if ($fontPath);
 $cmd .= " -co $colorPath" if ($colorPath);
+$cmd .= " -alwaysshared" if ($opt{'-alwaysshared'});
+$cmd .= " -nevershared" if ($opt{'-nevershared'});
 
 foreach $arg (@ARGV) {
     $cmd .= " " . &quotedString($arg);
@@ -182,29 +281,15 @@ $cmd .= " >> " . &quotedString($desktopLog) . " 2>&1";
 $pidFile = "$vncUserDir/$host:$displayNumber.pid";
 system("$cmd & echo \$! >$pidFile");
 
-# Give Xvnc a chance to start up
+# Give Xvnc4 a chance to start up
 
-sleep(1);
-unless (kill 0, `cat $pidFile`) {
-    warn "Couldn't start Xvnc; trying default font path.\n";
-    warn "Please set correct fontPath in the $prog script.\n";
-    $cmd =~ s@-fp [^ ]+@@;
-    system("$cmd & echo \$! >$pidFile");
-    sleep(1);
-}
-unless (kill 0, `cat $pidFile`) {
-    warn "Couldn't start Xvnc process.\n\n";
-    open(LOG, "<$desktopLog");
-    while (<LOG>) { print; }
-    close(LOG);
-    die "\n";
-}
+sleep(3); 
 
 warn "\nNew '$desktopName' desktop is $host:$displayNumber\n\n";
 
 # Create the user's xstartup script if necessary.
 
-unless (-e "$xstartup") {
+if (!(-e "$xstartup")) {
     warn "Creating default startup script $xstartup\n";
     open(XSTARTUP, ">$xstartup");
     print XSTARTUP $defaultXStartup;
@@ -220,7 +305,9 @@ warn "Log file is $desktopLog\n\n";
 # If the unix domain socket exists then use that (DISPLAY=:n) otherwise use
 # TCP (DISPLAY=host:n)
 
-if (-e "/tmp/.X11-unix/X$displayNumber") {
+if (-e "/tmp/.X11-unix/X$displayNumber" ||
+    -e "/usr/spool/sockets/X11/$displayNumber")
+{
     $ENV{DISPLAY}= ":$displayNumber";
 } else {
     $ENV{DISPLAY}= "$host:$displayNumber";
@@ -231,6 +318,66 @@ system("$xstartup >> " . &quotedString($desktopLog) . " 2>&1 &");
 
 exit;
 
+############################ Debian functions #################################
+# I thank Manoj for the code below.
+#
+# ReadConfigFile reads in a config file and sets variables according to it.
+#
+
+sub ReadConfigFile
+{
+  open(CONFIG, "$Config_file") || return;
+  my $lineno = 0;
+  while (<CONFIG>) {
+      chomp;
+      $lineno++;
+      s/\#.*//og;
+      next if /^\s*$/og;
+      $_ .= ";" unless /;\s*$/;
+      if (/^\s*([^=]+)\s*=\s*(\S.*)$/o) {
+          my $ret = eval "$1=$2";
+          if ($@) {
+              print STDERR "Error parsing config file $Config_file!\n";
+              print STDERR "$lineno:$_\n";
+          }
+      }
+  }
+}
+
+sub ReadXFConfigFont
+{
+  open(CONFIG, "$XFConfigPath") || return;
+  my $lineno = 0;
+  while (<CONFIG>) {
+      chomp;
+      $lineno++;
+      s/\#.*//og;
+      next if /^\s*$/og;
+      if (/^\s*FontPath\s*"(\S.*)"\s*$/o) {
+          $fontPath .= "," if $fontPath;
+          $fontPath .= $1;
+      }
+  }
+}
+
+sub ReadXFConfigColor
+{
+  open(CONFIG, "$XFConfigPath") || return;
+  my $lineno = 0;
+  while (<CONFIG> && !$colorPath) {
+      chomp;
+      $lineno++;
+      s/\#.*//og;
+      next if /^\s*$/og;
+      if (/^\s*RgbPath\s*"(\S.*)"\s*$/o) {
+          $colorPath = $1;
+      }
+  }
+}
+
+
+########## End of debian functions ###########
+
 
 ###############################################################################
 #
@@ -238,9 +385,10 @@ exit;
 # are sensible.
 #
 
-sub CheckGeometryAndDepth
+sub CheckGeometry
 {
-    if ($geometry =~ /^(\d+)x(\d+)$/) {
+   my $geometry=shift;
+   if ($geometry =~ /^(\d+)x(\d+)$/) {
 	$width = $1; $height = $2;
 
 	if (($width<1) || ($height<1)) {
@@ -260,6 +408,19 @@ sub CheckGeometryAndDepth
 	die "$prog: geometry $geometry is invalid\n";
     }
 
+}
+
+sub CheckGeometryAndDepth
+{
+	if ($geometry) {
+	  if ($#$geometry==-1) {
+	    &CheckGeometry($geometry);
+	  } else {
+		 foreach $i (0..$#$geometry) {
+			&CheckGeometry($geometry->[$i]);
+		 }
+	  }
+	}
     if (($depth < 8) || ($depth > 32)) {
 	die "Depth must be between 8 and 32\n";
     }
@@ -296,7 +457,7 @@ sub CheckDisplayNumber
 
     socket(S, $AF_INET, $SOCK_STREAM, 0) || die "$prog: socket failed: $!\n";
     eval 'setsockopt(S, &SOL_SOCKET, &SO_REUSEADDR, pack("l", 1))';
-    unless (bind(S, pack('S n x12', $AF_INET, 6000 + $n))) {
+    if (!bind(S, pack('S n x12', $AF_INET, 6000 + $n))) {
 	close(S);
 	return 0;
     }
@@ -304,7 +465,7 @@ sub CheckDisplayNumber
 
     socket(S, $AF_INET, $SOCK_STREAM, 0) || die "$prog: socket failed: $!\n";
     eval 'setsockopt(S, &SOL_SOCKET, &SO_REUSEADDR, pack("l", 1))';
-    unless (bind(S, pack('S n x12', $AF_INET, 5900 + $n))) {
+    if (!bind(S, pack('S n x12', $AF_INET, 5900 + $n))) {
 	close(S);
 	return 0;
     }
@@ -318,6 +479,13 @@ sub CheckDisplayNumber
 
     if (-e "/tmp/.X11-unix/X$n") {
 	warn "\nWarning: $host:$n is taken because of /tmp/.X11-unix/X$n\n";
+	warn "Remove this file if there is no X server $host:$n\n";
+	return 0;
+    }
+
+    if (-e "/usr/spool/sockets/X11/$n") {
+	warn("\nWarning: $host:$n is taken because of ".
+             "/usr/spool/sockets/X11/$n\n");
 	warn "Remove this file if there is no X server $host:$n\n";
 	return 0;
     }
@@ -344,7 +512,7 @@ sub GetXDisplayDefaults
     $wmDecorationWidth = 4;	# a guess at typical size for window manager
     $wmDecorationHeight = 24;	# decoration size
 
-    return unless (defined($ENV{DISPLAY}));
+    return if (!defined($ENV{DISPLAY}));
 
     @lines = `xdpyinfo 2>/dev/null`;
 
@@ -437,20 +605,25 @@ sub removeSlashes
 
 sub Usage
 {
-    die("TightVNC Server version 1.3.10\n".
-	"\n".
-	"Usage: $prog [<OPTIONS>] [:<DISPLAY#>]\n".
-	"       $prog -kill :<DISPLAY#>\n".
-	"\n".
-	"<OPTIONS> are Xvnc options, or:\n".
-	"\n".
-	"        -name <DESKTOP-NAME>\n".
-	"        -depth <DEPTH>\n".
-	"        -geometry <WIDTH>x<HEIGHT>\n".
-	"        -pixelformat rgb<NNN>\n".
-	"        -pixelformat bgr<NNN>\n".
-	"\n".
-	"See vncserver and Xvnc manual pages for more information.\n");
+    die("VNC4 server\n".
+       "\n".
+       "Usage: $prog [<OPTIONS>] [:<DISPLAY#>]\n".
+       "       $prog -kill :<DISPLAY#>\n".
+       "\n".
+       "<OPTIONS> are Xvnc4 options, or:\n".
+       "\n".
+       "        -name <DESKTOP-NAME>\n".
+       "        -depth <DEPTH>\n".
+       "        -geometry <WIDTH>x<HEIGHT>\n".
+       "        -httpport number\n".
+       "        -basehttpport number\n".
+       "        -alwaysshared\n".
+       "        -nevershared\n".
+       "        -pixelformat rgb<NNN>\n".
+       "        -pixelformat bgr<NNN>\n".
+       "        <Xvnc4-options>...\n".
+       "\n".
+       "See vnc4server and Xvnc4 manual pages for more information.\n");
 }
 
 
@@ -472,14 +645,14 @@ sub Kill
 	$pidFile = "$vncUserDir/$opt{'-kill'}.pid";
     }
 
-    unless (-r $pidFile) {
+    if (! -r $pidFile) {
 	die "\nCan't find file $pidFile\n".
-	    "You'll have to kill the Xvnc process manually\n\n";
+	    "You'll have to kill the Xvnc4 process manually\n\n";
     }
 
     $SIG{'HUP'} = 'IGNORE';
     chop($pid = `cat $pidFile`);
-    warn "Killing Xvnc process ID $pid\n";
+    warn "Killing Xvnc4 process ID $pid\n";
     system("kill $pid");
     unlink $pidFile;
     exit;
@@ -515,7 +688,13 @@ sub ParseOptions
 		    if (@ARGV == 0) {
 			&Usage();
 		    }
-		    $opt{$opt} = shift(@ARGV);
+		    if ($opt{$opt}) {
+		       # Convert scalar to array if necessary
+		       $opt{$opt} = [$opt{$opt}] if $#{$opt{$opt}}==-1;
+		       push(@{$opt{$opt}},shift(@ARGV));
+		    } else {
+		       $opt{$opt} = shift(@ARGV);
+		    }
 		    push(@optArgs, $opt{$opt});
 		} else {
 		    $opt{$opt} = 1;
@@ -549,7 +728,7 @@ sub SanityCheck
     #
 
  cmd:
-    foreach $cmd ("uname","xauth","Xvnc","vncpasswd") {
+    foreach $cmd ("uname","xauth","Xvnc4","vncpasswd") {
 	for (split(/:/,$ENV{PATH})) {
 	    if (-x "$_/$cmd") {
 		next cmd;
@@ -559,15 +738,13 @@ sub SanityCheck
     }
 
     #
-    # Check the HOME and USER environment variables are both set.
+    # Check the HOME environment variable is set
     #
 
-    unless (defined($ENV{HOME})) {
+    if (!defined($ENV{HOME})) {
 	die "$prog: The HOME environment variable is not set.\n";
     }
-    unless (defined($ENV{USER})) {
-	die "$prog: The USER environment variable is not set.\n";
-    }
+    chdir($ENV{HOME});
 
     #
     # Find socket constants. 'use Socket' is a perl5-ism, so we wrap it in an
@@ -600,32 +777,4 @@ sub SanityCheck
 	$AF_INET = &AF_INET;
 	$SOCK_STREAM = &SOCK_STREAM;
     }
-}
-
-sub ReadConfiguration
-{
-  my @configurableVariables =
-    qw(geometry
-       depth
-       desktopName
-       vncClasses
-       vncUserDir
-       fontPath
-       authType
-       colorPath
-      );
-
-  if (open CONF, "<$configFile") {
-    while (<CONF>) {
-      if (/^\s*\$(\w+)\s*=\s*(.*)$/) {
-        for my $var (@configurableVariables) {
-          if ($1 eq $var) {
-            eval $_;
-            last;
-          }
-        }
-      }
-    }
-    close CONF;
-  }
 }
