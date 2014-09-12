@@ -113,7 +113,7 @@ mkdir -p /usr/X11R6/lib/X11
 ln -s /usr/share/X11/fonts /usr/X11R6/lib/X11/fonts
 chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt
 /etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1 &
-
+ls -la /home/webc/.vnc/ >> /home/webc/log.txt
 cat /home/webc/.vnc/debian\:1.log >> /home/webc/log.txt
 
 mkfifo "$live_config_pipe"
@@ -126,7 +126,7 @@ xset s 600
 xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
-ps -aux >> /home/webc/log.txt
+#ps -aux >> /home/webc/log.txt
 curl --upload-file /home/webc/log.txt http://54.251.150.148/core/upload.php
 
 for x in $(cmdline)
