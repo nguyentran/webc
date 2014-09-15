@@ -112,8 +112,9 @@ fi
 mkdir -p /usr/X11R6/lib/X11
 ln -s /usr/share/X11/fonts /usr/X11R6/lib/X11/fonts
 chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt
-vncserver :1 >> /home/webc/log.txt 2>&1
+echo -e '123456\n123456\n' | vncserver :1 >> /home/webc/log.txt 2>&1
 ls -la /home/webc/.vnc/ >> /home/webc/log.txt
+ls -la /root/.vnc/ >> /home/webc/log.txt
 cat /home/webc/.vnc/debian\:1.log >> /home/webc/log.txt
 
 mkfifo "$live_config_pipe"
