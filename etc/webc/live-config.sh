@@ -324,6 +324,8 @@ wait_for $live_config_pipe 2>/dev/null
 
 cmdline_has debug && set -x
 
+chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt 2>&1
+
 # Try to make /live/image writable
 mount -o remount,rw /live/image
 
