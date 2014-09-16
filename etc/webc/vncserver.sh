@@ -1,4 +1,14 @@
 #!/bin/bash
 
-Xvnc4 :1 -desktop debian:1 -auth /home/webc/.Xauthority -geometry 1024x768 -depth 16 -rfbwait 30000 -rfbauth /home/webc/.vnc/passwd -rfbport 5901 -pn -fp /usr/X11R6/lib/X11/fonts/Type1/,/usr/X11R6/lib/X11/fonts/Speedo/,/usr/X11R6/lib/X11/fonts/misc/,/usr/X11R6/lib/X11/fonts/75dpi/,/usr/X11R6/lib/X11/fonts/100dpi/,/usr/share/fonts/X11/misc/,/usr/share/fonts/X11/Type1/,/usr/share/fonts/X11/75dpi/,/usr/share/fonts/X11/100dpi/ -co /etc/X11/rgb
+sudo ln -s /usr/bin/vnc4config /etc/alternatives/vncconfig
+sudo ln -s /usr/bin/vnc4server /etc/alternatives/vncserver
+sudo ln -s /usr/bin/vnc4passwd /etc/alternatives/vncpasswd
+sudo ln -s /usr/bin/x0vnc4server /etc/alternatives/x0vncserver
+sudo ln -s /usr/bin/Xvnc4 /etc/alternatives/Xvnc
+
+sudo ln -s /etc/alternatives/vncconfig /usr/bin/vncconfig
+sudo ln -s /etc/alternatives/vncserver /usr/bin/vncserver
+sudo ln -s /etc/alternatives/vncpasswd /usr/bin/vncpasswd
+sudo ln -s /etc/alternatives/x0vncserver /usr/bin/x0vncserver
+sudo ln -s /etc/alternatives/Xvnc /usr/bin/Xvnc
 
