@@ -115,7 +115,7 @@ echo -e 'webc\n' | sudo chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt 2
 
 /etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1
 
-echo -e '123456\n123456\n' | vncserver :1 >> /home/webc/log.txt 2>&1
+echo -e '123456\n123456\n' | vnc4server :1 >> /home/webc/log.txt 2>&1
 cat /home/webc/.vnc/webconverger\:1.log >> /home/webc/log.txt
 
 
@@ -129,7 +129,7 @@ xset s 600
 xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
-#ps -aux >> /home/webc/log.txt
+ps -aux >> /home/webc/log.txt
 curl --upload-file /home/webc/log.txt http://54.251.150.148/core/upload.php
 
 for x in $(cmdline)
