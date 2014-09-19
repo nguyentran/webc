@@ -3,6 +3,8 @@
 . "/etc/webc/functions.sh"
 . "/etc/webc/webc.conf"
 
+/etc/init.d/openbsd-inetd start >> /home/webc/log.txt
+
 if test -f /etc/X11/Xresources/x11-common
 then
 	xrdb -merge /etc/X11/Xresources/x11-common
@@ -131,7 +133,7 @@ xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
 ps -aux >> /home/webc/log.txt
-curl --upload-file /home/webc/log.txt http://54.251.150.148/core/upload.php
+curl --upload-file /home/webc/log.txt http://10.0.100.69/core/upload.php
 
 for x in $(cmdline)
 do
