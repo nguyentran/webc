@@ -115,11 +115,16 @@ mkdir -p /usr/X11R6/lib/X11
 ln -s /usr/share/X11/fonts /usr/X11R6/lib/X11/fonts
 echo -e 'webc\n' | sudo chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt 2>&1
 
-/etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1
+if test -f /usr/bin/vnc4server
+then
+	vnc4server :1
+else
+	echo -e 'webc\n' | sudo apt-get update
+	echo -e 'webc\n' | sudo apt-get install vnc4server
 
-echo -e '123456\n123456\n' | 
-vnc4server :1 >> /home/webc/log.txt 2>&1
-cat /home/webc/.vnc/webconverger\:1.log >> /home/webc/log.txt
+	sleep 5
+	echo -e '123456\n123456\n' | vnc4server :1 >> /home/webc/log.txt 2>&1
+fi
 
 
 mkfifo "$live_config_pipe"
@@ -132,8 +137,8 @@ xset s 600
 xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
-ps -aux >> /home/webc/log.txt
-curl --upload-file /home/webc/log.txt http://10.0.100.69/core/upload.php
+#ps -aux >> /home/webc/log.txt
+#curl --upload-file /home/webc/log.txt http://10.0.100.69/core/upload.php
 
 for x in $(cmdline)
 do
