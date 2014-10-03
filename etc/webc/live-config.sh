@@ -99,9 +99,14 @@ then
 	echo 'pref("extensions.webconverger.showprintbutton", true);' >> "$prefs"
 fi
 
-fullscreen="/etc/webc/extensions/webcfullscreen"
-test -e "$link" && rm -f "$link"
-ln -s "$fullscreen" "$link"
+# uncomment for run firefox fullscreen
+#fullscreen="/etc/webc/extensions/webcfullscreen"
+#test -e "$link" && rm -f "$link"
+#ln -s "$fullscreen" "$link"
+
+# start gnome-terminal
+/usr/bin/gnome-terminal &
+
 #noaddress="/etc/webc/extensions/webcnoaddressbar"
 #ln -s "$noaddress" "$link"
 
