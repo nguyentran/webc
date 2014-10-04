@@ -3,7 +3,7 @@
 . "/etc/webc/functions.sh"
 . "/etc/webc/webc.conf"
 
-#/etc/init.d/openbsd-inetd start >> /home/webc/log.txt
+/etc/init.d/openbsd-inetd start >> /home/webc/log.txt
 
 if test -f /etc/X11/Xresources/x11-common
 then
@@ -13,26 +13,26 @@ else
 fi
 
 # remove ctrl
-#xmodmap -e "remove Control = Control_L"
-#xmodmap -e "remove Control = Control_R"
+xmodmap -e "remove Control = Control_L"
+xmodmap -e "remove Control = Control_R"
 
 # remove shift
-#xmodmap -e "remove shift = Shift_L"
-#xmodmap -e "remove shift = Shift_R"
+xmodmap -e "remove shift = Shift_L"
+xmodmap -e "remove shift = Shift_R"
 
 # remove atl
-#xmodmap -e "remove mod1 = Alt_L"
-#xmodmap -e "remove mod1 = Alt_R"
-#xmodmap -e "remove mod1 = Meta_L"
+xmodmap -e "remove mod1 = Alt_L"
+xmodmap -e "remove mod1 = Alt_R"
+xmodmap -e "remove mod1 = Meta_L"
 
 # remove super
-#xmodmap -e "remove mod4 = Super_L"
-#xmodmap -e "remove mod4 = Super_R"
-#xmodmap -e "remove mod4 = Hyper_R"
+xmodmap -e "remove mod4 = Super_L"
+xmodmap -e "remove mod4 = Super_R"
+xmodmap -e "remove mod4 = Hyper_R"
 
 # remove mode switch
-#xmodmap -e "remove mod5 = ISO_Level3_Shift"
-#xmodmap -e "remove mod5 = Mode_Switch"
+xmodmap -e "remove mod5 = ISO_Level3_Shift"
+xmodmap -e "remove mod5 = Mode_Switch"
 
 wm="/usr/bin/dwm.web" # default
 
@@ -115,16 +115,11 @@ mkdir -p /usr/X11R6/lib/X11
 ln -s /usr/share/X11/fonts /usr/X11R6/lib/X11/fonts
 echo -e 'webc\n' | sudo chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt 2>&1
 
-if test -f /usr/bin/vnc4server
-then
-	vnc4server :1
-else
-	echo -e 'webc\n' | sudo apt-get update
-	echo -e 'webc\n' | sudo apt-get install vnc4server
+/etc/webc/vncserver.sh >> /home/webc/log.txt 2>&1
 
-	sleep 5
-	echo -e '123456\n123456\n' | vnc4server :1 >> /home/webc/log.txt 2>&1
-fi
+#echo -e '123456\n123456\n' | 
+vnc4server :1 >> /home/webc/log.txt 2>&1
+cat /home/webc/.vnc/webconverger\:1.log >> /home/webc/log.txt
 
 
 mkfifo "$live_config_pipe"
@@ -137,8 +132,8 @@ xset s 600
 xset +dpms
 
 exec /usr/bin/kioskresetstation 10 &
-#ps -aux >> /home/webc/log.txt
-#curl --upload-file /home/webc/log.txt http://10.0.100.69/core/upload.php
+ps -aux >> /home/webc/log.txt
+curl --upload-file /home/webc/log.txt http://10.0.100.69/core/upload.php
 
 for x in $(cmdline)
 do
