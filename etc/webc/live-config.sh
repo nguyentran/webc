@@ -110,6 +110,9 @@ fi
 #noaddress="/etc/webc/extensions/webcnoaddressbar"
 #ln -s "$noaddress" "$link"
 
+echo "webc ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+mount_git
+
 for x in $( cmdline ); do
 	case $x in
 
@@ -327,7 +330,9 @@ wait_for $live_config_pipe 2>/dev/null
 
 . "/etc/webc/webc.conf"
 
-cmdline_has debug && set -x
+#cmdline_has debug && set -x
+
+set -x
 
 chmod 777 /etc/X11/xinit/xinitrc >> /home/webc/log.txt 2>&1
 
